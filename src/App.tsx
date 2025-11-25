@@ -3,6 +3,7 @@ import {Bar, BarButton, BarMenuItem, BarDivider, SubBar, BarDate} from '@v-uik/b
 import {ReactComponent as PeopleLogo} from './assets/people.svg'
 import {ReactComponent as Logo} from './assets/logo.svg'
 import {Good} from './Good';
+import {NotificationContainer} from "@v-uik/notification";
 
 function App() {
     return <>
@@ -22,6 +23,13 @@ function App() {
             <BarMenuItem>Товары</BarMenuItem>
             <BarMenuItem>Адреса складов</BarMenuItem>
         </SubBar>
+        <Good/>
+        <NotificationContainer
+            position="top-right"
+            autoClose={5000}
+            limit={1}
+            closeButtonAriaLabel="Закрыть"
+        />
     </>
 }
 
