@@ -39,7 +39,6 @@ export function Good(): JSX.Element {
     const [openDelete, setOpenDelete] = React.useState(false)
     const showModalDelete = () => setOpenDelete(true)
     const hideModalDelete = () => setOpenDelete(false)
-
     //Modal - Update
     const [openUpdate, setOpenUpdate] = React.useState(false)
     const showModalUpdate = () => setOpenUpdate(true)
@@ -116,6 +115,8 @@ export function Good(): JSX.Element {
         hideModalUpdate()
         await loadData()
     }
+
+
     const columns: ColumnProps<GoodSource>[] = [
         {
             key: 'id',

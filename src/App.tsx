@@ -1,13 +1,22 @@
-import React, {useState} from 'react'
-import {Bar, BarButton, BarMenuItem, BarDivider, SubBar, BarDate} from '@v-uik/bar'
+import React from 'react'
+import {Bar, BarButton, BarMenuItem, BarDivider, SubBar, BarDate} from '@v-uik/bar';
 import {ReactComponent as PeopleLogo} from './assets/people.svg'
 import {ReactComponent as Logo} from './assets/logo.svg'
-import {Good} from './Good'
-import {NotificationContainer} from "@v-uik/notification"
-import {Darkstore} from "./Darkstore"
+import {Good} from './Good';
+import {NotificationContainer} from "@v-uik/notification";
+import {Route, Routes, useNavigate} from "react-router-dom";
+import Delivery from "./Delivery";
+import Darkstore from "./Darkstore";
 
 function App() {
-    const [activeTab, setActiveTab] = useState<'delivery' | 'goods' | 'darkstores'>('darkstores')
+    const navigate = useNavigate()
+
+    const [selected, setSelected] = React.useState(1)
+
+    const setPage = (selectedId: number, page: string) => {
+        setSelected(selectedId)
+        navigate(page, {replace: false})
+    }
 
     return <>
         <Bar kind="light">
@@ -17,24 +26,26 @@ function App() {
             <BarDivider/>
             <BarButton icon={<PeopleLogo/>}/>
         </Bar>
-        <SubBar
-            kind="light"
+        <SubBar kind="light"
             style={{
                 top: 48
             }}
         >
-            <BarMenuItem selected={activeTab === 'delivery'} onClick={() => setActiveTab('delivery')}>
-                Доставка
-            </BarMenuItem>
-            <BarMenuItem selected={activeTab === 'goods'} onClick={() => setActiveTab('goods')}>
-                Товары
-            </BarMenuItem>
-            <BarMenuItem selected={activeTab === 'darkstores'} onClick={() => setActiveTab('darkstores')}>
-                Адреса складов
-            </BarMenuItem>
+            <BarMenuItem selected={selected === 1}
+                             onClick={() => setPage(1, 'delivery')}>Доставка</BarMenuItem>
+            <BarMenuItem selected={selected === 2}
+                         onClick={() => setPage(2, 'good')}>Товары</BarMenuItem>
+            <BarMenuItem selected={selected === 3}
+                         onClick={() => setPage(3, 'darkstore')}>Адреса складов</BarMenuItem>
         </SubBar>
-        {activeTab === 'goods' && <Good/>}
-        {activeTab === 'darkstores' && <Darkstore/>}
+        <div>
+            <Routes>
+                <Route path="/" element={<Delivery />} />
+                <Route path="delivery" element={<Delivery />} />
+                <Route path="good" element={<Good />} />
+                <Route path="darkstore" element={<Darkstore />} />
+            </Routes>
+        </div>
         <NotificationContainer
             position="top-right"
             autoClose={5000}
