@@ -17,9 +17,9 @@ export function Good(): JSX.Element {
             padding: 32,
         },
         buttonWrapper: {
-         display: 'flex',
-         marginBottom: 16,
-         justifyContent: 'flex-end',
+            display: 'flex',
+            marginBottom: 16,
+            justifyContent: 'flex-end',
         }
     })
     const classesList = useStyles()
@@ -39,6 +39,10 @@ export function Good(): JSX.Element {
     const [openDelete, setOpenDelete] = React.useState(false)
     const showModalDelete = () => setOpenDelete(true)
     const hideModalDelete = () => setOpenDelete(false)
+    //Modal - Update
+    const [openUpdate, setOpenUpdate] = React.useState(false)
+    const showModalUpdate = () => setOpenUpdate(true)
+    const hideModalUpdate = () => setOpenUpdate(false)
 
     type GoodSource = RecordDataSource<{
         id: number
@@ -88,6 +92,31 @@ export function Good(): JSX.Element {
 
         await loadData()
     }
+
+    async function updateGood() {
+        const response = await fetch("http://localhost:8080/good", {
+            method: "PUT",
+            body: JSON.stringify({
+                id: selectedId,
+                name: selectedGoodName !== "" ? selectedGoodName : null,
+                price: selectedGoodPrice !== 0 ? selectedGoodPrice : null
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                accept: 'application/json',
+            }
+        })
+
+        if (!response.ok) {
+            const message = await response.text()
+            notification.error(message)
+        }
+
+        hideModalUpdate()
+        await loadData()
+    }
+
+
     const columns: ColumnProps<GoodSource>[] = [
         {
             key: 'id',
@@ -103,6 +132,25 @@ export function Good(): JSX.Element {
             key: 'price',
             dataIndex: 'price',
             title: 'Цена за штуку',
+        },
+        {
+            key: 'edit',
+            dataIndex: 'edit',
+            renderCellContent: (thiscell) => (
+                <Button
+                    aria-label="Действие"
+                    onClick={() => {
+                        setSelectedId(thiscell.row.id)
+                        setSelectedGoodName(thiscell.row.name)
+                        setSelectedGoodPrice(thiscell.row.price)
+                        showModalUpdate()
+                    }}
+                    style={{
+                        backgroundColor: "blue"
+                    }}>
+                    Изменить
+                </Button>
+            ),
         },
         {
             key: 'delete',
@@ -153,7 +201,9 @@ export function Good(): JSX.Element {
                 </ModalHeader>
                 <ModalBody>
                     <Input label="Наименование" value={selectedGoodName} onChange={setSelectedGoodName}/>
-                    <InputNumber label="Цена" value={selectedGoodPrice} onChange={(value:any) => {setSelectedGoodPrice(value)}}/>
+                    <InputNumber label="Цена" value={selectedGoodPrice} onChange={(value: any) => {
+                        setSelectedGoodPrice(value)
+                    }}/>
                 </ModalBody>
                 <ModalFooter>
                     <Button kind="outlined" onClick={hideModalCreation}>
@@ -178,6 +228,27 @@ export function Good(): JSX.Element {
                         Отмена
                     </Button>
                     <Button onClick={() => deleteGood()}>Применить</Button>
+                </ModalFooter>
+            </Modal>
+            <Modal open={openUpdate} onClose={hideModalUpdate}>
+                <ModalHeader
+                    closeButtonProps={{
+                        'aria-label': 'Close modal',
+                    }}
+                >
+                    Изменить товар
+                </ModalHeader>
+                <ModalBody>
+                    <Input label="Наименование" value={selectedGoodName} onChange={setSelectedGoodName}/>
+                    <InputNumber label="Цена" value={selectedGoodPrice} onChange={(value: any) => {
+                        setSelectedGoodPrice(value)
+                    }}/>
+                </ModalBody>
+                <ModalFooter>
+                    <Button kind="outlined" onClick={hideModalUpdate}>
+                        Отмена
+                    </Button>
+                    <Button onClick={() => updateGood()}>Применить</Button>
                 </ModalFooter>
             </Modal>
         </div>
